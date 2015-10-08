@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import warnings
 
 class Question(object):
     """A single question with a unique correct answer.
@@ -39,9 +40,12 @@ class Question(object):
             tempans['gotRight'] = False
         return tempans
 
-    def plainHTML(self):
+    def HTML(self, aForm = False):
         anslist = []
         for key in self.answers:
+            if aForm:
+                formstring = '<input type = "radio" name = "%s" value = "%s">' % (self.qid, key)
+                anslist.append(formstring)
             anslist.append(key)
             anslist.append(self.answers[key])
             anslist.append('<br>')
@@ -76,8 +80,11 @@ class QBlock(object):
         qsToAsk = [aQuestion.ask() for aQuestion in self.questions]
         return {'header': self.header, 'questions': qsToAsk}
 
-    def plainHTML(self):
-        questionstring = '<br>'.join([question.plainHTML() for question in self.questions])
+    def HTML(self, aForm = False):
+        if aForm:
+            questionstring = '<br>'.join([question.HTML(aForm = True) for question in self.questions])
+        else:
+            questionstring = '<br>'.join([question.HTML() for question in self.questions])
         fullstring = '<p>%s</p>%s' % (self.header, questionstring)
         return fullstring
 
@@ -115,8 +122,14 @@ class Exam(object):
         self.questions = OrderedDict()
         self.grades = []
 
-    def plainHTML(self):
-        return '<hr>'.join([self.blocks[block].plainHTML() for block in self.blocks])
+    def HTML(self, aForm = False, CGIurl = None):
+        if aForm:
+            if not CGIurl:
+                warnings.warn('Expected a script url when producing an HTML form.')
+            basestring = '<hr>'.join([self.blocks[block].HTML(aForm = True) for block in self.blocks])
+            newstring = '<form action="%s" method="post">%s<br><input type="submit" value="Submit">' % (CGIurl, basestring)
+            return newstring
+        return '<hr>'.join([self.blocks[block].HTML() for block in self.blocks])
 
     def assignBlock(self, aQuestion):
         # aQuestion is a question object.  dumps q in noneblock if its designated block does not exist.
