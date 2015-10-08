@@ -1,5 +1,6 @@
 from collections import OrderedDict
 import warnings
+import re
 
 class Question(object):
     """A single question with a unique correct answer.
@@ -51,7 +52,8 @@ class Question(object):
             anslist.append('<br>')
         del anslist[-1]
         ansstring = ' '.join(anslist)
-        thestring = '<p>%s</p><p>%s</p>' % (self.prompt, ansstring)
+        derprompt = re.sub('\n', '<br>', self.prompt)
+        thestring = '<p><li>%s</p><p>%s</li></p>' % (derprompt, ansstring)
         return thestring
 
     def getBlock(self):
@@ -85,7 +87,8 @@ class QBlock(object):
             questionstring = '<br>'.join([question.HTML(aForm = True) for question in self.questions])
         else:
             questionstring = '<br>'.join([question.HTML() for question in self.questions])
-        fullstring = '<p>%s</p>%s' % (self.header, questionstring)
+        derheader = re.sub('\n', '<br>', self.header)
+        fullstring = '<p>%s</p>%s' % (derheader, questionstring)
         return fullstring
 
 
@@ -127,7 +130,7 @@ class Exam(object):
             if not CGIurl:
                 warnings.warn('Expected a script url when producing an HTML form.')
             basestring = '<hr>'.join([self.blocks[block].HTML(aForm = True) for block in self.blocks])
-            newstring = '<form action="%s" method="post">%s<br><button type="submit">Submit</button></form>' % (CGIurl, basestring)
+            newstring = '<form action="%s" method="post"><ol>%s</ol><br><center><button type="submit">Submit</button></center></form>' % (CGIurl, basestring)
             return newstring
         return '<hr>'.join([self.blocks[block].HTML() for block in self.blocks])
 
