@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import warnings
 import re
+import datetime
 
 class Question(object):
     """A single question with a unique correct answer.
@@ -130,7 +131,8 @@ class Exam(object):
             if not CGIurl:
                 warnings.warn('Expected a script url when producing an HTML form.')
             basestring = '<hr>'.join([self.blocks[block].HTML(aForm = True) for block in self.blocks])
-            newstring = '<form action="%s" method="post"><ol>%s</ol><br><center><button type="submit">Submit</button></center></form>' % (CGIurl, basestring)
+            startTime = datetime.datetime.now().isoformat()
+            newstring = '<form action="%s" method="post"><ol>%s</ol><input type="hidden" name="starttime" value="%s"><br><center><button type="submit">Submit</button></center></form>' % (CGIurl, basestring, startTime)
             return newstring
         return '<hr>'.join([self.blocks[block].HTML() for block in self.blocks])
 
