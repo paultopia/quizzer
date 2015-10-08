@@ -21,7 +21,7 @@ def splitIntoBlocks(examString):
     return splitclean(blocks)
 
 def splitIntoQuestions(blocktuple):
-    questions = re.split('(QUESTION[1-9]*)', blocktuple[1].strip(), flags=re.M)
+    questions = re.split('(QUESTION[0-9]*)', blocktuple[1].strip(), flags=re.M)
     if blocktuple[0].strip() != 'NOBLOCK':
         header = questions.pop(0).strip()
         blockid = blocktuple[0].strip()

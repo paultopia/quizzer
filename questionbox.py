@@ -39,6 +39,17 @@ class Question(object):
             tempans['gotRight'] = False
         return tempans
 
+    def plainHTML(self):
+        anslist = []
+        for key in self.answers:
+            anslist.append(key)
+            anslist.append(self.answers[key])
+            anslist.append('<br>')
+        del anslist[-1]
+        ansstring = ' '.join(anslist)
+        thestring = '<p>%s</p><p>%s</p>' % (self.prompt, ansstring)
+        return thestring
+
     def getBlock(self):
         return self.block
 
@@ -64,6 +75,12 @@ class QBlock(object):
     def ask(self):
         qsToAsk = [aQuestion.ask() for aQuestion in self.questions]
         return {'header': self.header, 'questions': qsToAsk}
+
+    def plainHTML(self):
+        questionstring = '<br>'.join([question.plainHTML() for question in self.questions])
+        fullstring = '<p>%s</p>%s' % (self.header, questionstring)
+        return fullstring
+
 
     def addQuestion(self, aQuestion):
         if type(aQuestion) is not Question:
@@ -97,6 +114,9 @@ class Exam(object):
         self.blocks = OrderedDict()
         self.questions = OrderedDict()
         self.grades = []
+
+    def plainHTML(self):
+        return '<hr>'.join([self.blocks[block].plainHTML() for block in self.blocks])
 
     def assignBlock(self, aQuestion):
         # aQuestion is a question object.  dumps q in noneblock if its designated block does not exist.
