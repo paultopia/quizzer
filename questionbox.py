@@ -127,7 +127,7 @@ class Exam(object):
             if not CGIurl:
                 warnings.warn('Expected a script url when producing an HTML form.')
             basestring = '<hr>'.join([self.blocks[block].HTML(aForm = True) for block in self.blocks])
-            newstring = '<form action="%s" method="post">%s<br><button type="submit">Submit</button>' % (CGIurl, basestring)
+            newstring = '<form action="%s" method="post">%s<br><button type="submit">Submit</button></form>' % (CGIurl, basestring)
             return newstring
         return '<hr>'.join([self.blocks[block].HTML() for block in self.blocks])
 
